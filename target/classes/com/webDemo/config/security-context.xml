@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<security:authentication-manager>
+	
+		<security:authentication-provider>
+		
+			<security:jdbc-user-service data-source-ref="myDataSource"
+				users-by-username-query="select username ,password ,enabled from users where username=?"
+				authorities-by-username-query="select username ,authority from users where username=?" />
+				
+		</security:authentication-provider>	
+		
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="admin123" authorities="admin"
+					password="password" />
+			</security:user-service>
+		</security:authentication-provider>
+		
+	</security:authentication-manager>
+	<security:http>
+		<security:intercept-url pattern="/" access="permitAll" />
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/database" access="isAuthenticated()" />
+		<security:intercept-url pattern="/login" access="permitAll" />
+		<security:intercept-url pattern="/register" access="permitAll" />
+		<security:intercept-url pattern="/createuser" access="permitAll" />
+		<security:intercept-url pattern="/logout" access="permitAll" />
+		<security:intercept-url pattern="/**" access="denyAll" />
+		<security:form-login login-page="/login"
+			authentication-failure-url="/login?error=true" />
+		<security:csrf disabled="true" />
+		<security:logout logout-url="/logout" logout-success-url="/" />
+	</security:http>
+
+</beans>
